@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Thanh toán</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#020617;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+.box{
+background:#1e293b;
+padding:20px;
+border-radius:12px;
+width:320px;
+text-align:center;
+}
+button{
+width:100%;
+padding:10px;
+margin-top:10px;
+background:#22c55e;
+border:none;
+border-radius:8px;
+color:white;
+}
+.copy{color:#22c55e;cursor:pointer}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2>Thanh toán</h2>
+
+<p>Số tiền: <span id="price"></span>đ</p>
+
+<p>MB Bank</p>
+<p class="copy" onclick="copy('0588807300000')">0588807300000</p>
+
+<p><b>Nội dung:</b></p>
+<p id="nd" class="copy" onclick="copyND()"></p>
+
+<button onclick="done()">Tôi đã thanh toán</button>
+</div>
+
+<script>
+let p=new URLSearchParams(location.search).get("amount")||0;
+document.getElementById("price").innerText=p;
+
+let nd="MDUYK"+Math.floor(Math.random()*999999);
+document.getElementById("nd").innerText=nd;
+
+function copy(t){
+navigator.clipboard.writeText(t);
+alert("Đã copy");
+}
+
+function copyND(){
+navigator.clipboard.writeText(nd);
+alert("Đã copy nội dung");
+}
+
+function done(){
+window.location.href="https://zalo.me/0328033706";
+}
+</script>
+
+</body>
+</html>
