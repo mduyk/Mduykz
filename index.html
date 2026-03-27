@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Shop mduyk~</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{margin:0;font-family:Arial;background:#020617;color:white;}
+.auth{
+position:fixed;inset:0;
+display:flex;justify-content:center;align-items:center;
+background:#0008;
+}
+.box{
+background:#1e293b;
+padding:20px;
+border-radius:12px;
+width:320px;
+text-align:center;
+}
+input,button{
+width:100%;padding:10px;margin:5px 0;
+border:none;border-radius:8px;
+}
+button{background:#22c55e;color:white;cursor:pointer;}
+.shop{display:none;}
+.pack{
+background:#1e293b;
+margin:10px;
+padding:10px;
+border-radius:10px;
+}
+.pack button{background:#3b82f6;}
+</style>
+</head>
+
+<body>
+
+<!-- AUTH -->
+<div class="auth" id="auth">
+<div class="box">
+<h3>Đăng nhập / Đăng ký</h3>
+
+<input id="u" placeholder="Tài khoản">
+<input id="p" type="password" placeholder="Mật khẩu">
+
+<button onclick="register()">Đăng ký</button>
+<button onclick="login()">Đăng nhập</button>
+</div>
+</div>
+
+<!-- SHOP -->
+<div class="shop" id="shop">
+
+<h2 style="text-align:center">🛒 SHOP MDUYK</h2>
+
+<h3 style="text-align:center">💰 Số dư: <span id="money">0</span>đ</h3>
+
+<!-- NẠP CODE -->
+<div style="padding:10px;text-align:center">
+<input id="code" placeholder="Nhập mã nạp">
+<button onclick="nap()">Nạp code</button>
+</div>
+
+<!-- GÓI SẢN PHẨM (KHÔNG MẤT) -->
+<div class="pack">
+<h3>Gói 50K</h3>
+<button onclick="buy('Gói 50K',50000)">Mua</button>
+</div>
+
+<div class="pack">
+<h3>Gói 100K</h3>
+<button onclick="buy('Gói 100K',100000)">Mua</button>
+</div>
+
+<div class="pack">
+<h3>Gói 200K</h3>
+<button onclick="buy('Gói 200K',200000)">Mua</button>
+</div>
+
+<div class="pack">
+<h3>Gói 500K</h3>
+<button onclick="buy('Gói 500K',500000)">Mua</button>
+</div>
+
+<button onclick="location.href='history.html'">📜 Lịch sử mua</button>
+
+</div>
+
+<script>
+const SECRET="mduyk";
+
+// ===== MONEY =====
+function getMoney(){
+let u=localStorage.getItem("user");
+let d=localStorage.getItem("money_"+u);
+if(!d) return 0;
+return parseInt(atob(d).split("|")[0]);
+}
+
+function setMoney(x){
+let u=localStorage.getItem("user");
+localStorage.setItem("money_"+u,btoa(x+"|"+SECRET));
+document.getElementById("money").innerText=x;
+}
+
+function update(){
+document.getElementById("money").innerText=getMoney();
+}
+
+// ===== AUTH =====
+function register(){
+let u=document.getElementById("u").value;
+let p=document.getElementById("p").value;
+
+localStorage.setItem("user",u);
+localStorage.setItem("pass",p);
+localStorage.setItem("money_"+u,btoa("0|"+SECRET));
+
+alert("Đăng ký OK");
+}
+
+function login(){
+let u=document.getElementById("u").value;
+let p=document.getElementById("p").value;
+
+if(u==localStorage.getItem("user") && p==localStorage.getItem("pass")){
+document.getElementById("auth").style.display="none";
+document.getElementById("shop").style.display="block";
+update();
+}else alert("Sai tài khoản");
+}
+
+// ===== CODE NẠP (CỐ ĐỊNH KHÓ ĐOÁN) =====
+let codes = {
+  "MD7X9Q2L8K": 50000,
+  "ZK3P8M1Q7V": 50000,
+  "Q9L2X7M8KD": 50000,
+  "V8X1K9Q3LM": 50000,
+  "M7Q8Z2X9LP": 50000,
+
+  "X9M2Q7L8ZP": 100000,
+  "K8Z1X9M3QP": 100000,
+  "Q7L9M2X8ZK": 100000,
+  "Z2X8Q9M1LP": 100000,
+  "M9Q8X1Z7LK": 100000,
+
+  "L8X9M2Q7ZP": 200000,
+  "Q1Z9X8M7LK": 200000,
+  "X7M9Q2Z8LP": 200000,
+  "Z8Q1M9X7LK": 200000,
+  "M2X9Z7Q8LP": 200000,
+
+  "Q9X8M7Z2LP": 500000,
+  "X2Z9Q8M7LK": 500000,
+  "M8Q7X9Z2LP": 500000,
+  "Z7M2X9Q8LK": 500000,
+  "X9Q2Z8M7LP": 500000
+};
+
+let used=JSON.parse(localStorage.getItem("used")||"[]");
+
+function nap(){
+let c=document.getElementById("code").value.trim();
+
+if(used.includes(c)){
+alert("Code đã dùng");
+return;
+}
+
+if(codes[c]){
+setMoney(getMoney()+codes[c]);
+
+used.push(c);
+localStorage.setItem("used",JSON.stringify(used));
+
+alert("+"+codes[c]+"đ");
+}else alert("Sai code");
+}
+
+// ===== MUA HÀNG + LƯU LỊCH SỬ =====
+function buy(name,price){
+let m=getMoney();
+if(m<price) return alert("Không đủ tiền");
+
+setMoney(m-price);
+
+let h=JSON.parse(localStorage.getItem("history")||"[]");
+
+h.push({
+name:name,
+price:price,
+time:new Date().toLocaleString("vi-VN")
+});
+
+localStorage.setItem("history",JSON.stringify(h));
+
+window.location.href="history.html";
+}
+</script>
+
+</body>
+</html>
