@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lịch sử</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#020617;
+color:white;
+padding:20px;
+}
+.box{
+background:#1e293b;
+padding:15px;
+border-radius:10px;
+margin-bottom:10px;
+}
+.price{color:#22c55e}
+.time{color:#fbbf24;font-size:13px}
+</style>
+</head>
+
+<body>
+
+<h2>📜 Lịch sử mua hàng</h2>
+<div id="list"></div>
+
+<script>
+let data=JSON.parse(localStorage.getItem("history")||"[]");
+
+if(data.length==0){
+document.getElementById("list").innerHTML="Chưa có lịch sử";
+}else{
+data.reverse();
+
+let html="";
+data.forEach(i=>{
+html+=`
+<div class="box">
+<h3>${i.name}</h3>
+<p class="price">${i.price}đ</p>
+<p class="time">🕒 ${i.time}</p>
+</div>
+`;
+});
+
+document.getElementById("list").innerHTML=html;
+}
+</script>
+
+</body>
+</html>
